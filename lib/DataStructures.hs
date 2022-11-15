@@ -5,16 +5,16 @@ type Coordinate = (Int, Int)
 
 -- De kleuren van de kaarten.
 data CardType
-  = Clubs
-  | Diamonds
-  | Hearts
-  | Spades
+  = Club
+  | Diamond
+  | Heart
+  | Spade
   | NoneType
   deriving (Show, Enum, Eq)
 
 -- De waarden van de kaarten.
 data CardValue
-  = Ace
+  = A
   | Two
   | Three
   | Four
@@ -24,9 +24,9 @@ data CardValue
   | Eight
   | Nine
   | Ten
-  | Jack
-  | Queen
-  | King
+  | J
+  | Q
+  | K
   | NoneValue
   deriving (Show, Enum, Eq)
 
@@ -35,7 +35,7 @@ data CardValue
 data CardStatus
   = Hidden
   | Visible
-  deriving (Show)
+  deriving (Show,Eq)
 
 -- Een kaart heeft een type, een waarde en een status.
 type Card = (CardType, CardValue, CardStatus) -- omzetten naar record syntax (16 november)
@@ -55,7 +55,7 @@ data Board = Board
   deriving (Show)
 
 -- De richting waarin de selector kan bewegen.
-data Direction = U | D | L | R deriving (Show)
+data Direction = U | D | L | R deriving (Show, Eq)
 
 -- De selector van het spel.
 data Selector = Selector
