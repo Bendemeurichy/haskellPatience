@@ -248,23 +248,28 @@ isKey _ _ = False
 -- TODO: dont't draw if drawpile is empty
 handleInput :: Event -> Game -> Game
 handleInput ev game
-  | isSpecialKey KeyUp ev = game {selector = moveSelector (board game) U (selector game)}
-  | isSpecialKey KeyDown ev = game {selector = moveSelector (board game) D (selector game)}
-  | isSpecialKey KeyLeft ev = game {selector = moveSelector (board game) L (selector game)}
-  | isSpecialKey KeyRight ev = game {selector = moveSelector (board game) R (selector game)}
-  | isSpecialKey KeySpace ev && isNothing (selected (selector game)) && stacksize (gameStacks (board game) !! fst (position (selector game))) /=0 = game {selector = (selector game) {selected = Just (position (selector game))}}
-  | isSpecialKey KeySpace ev && isNothing (selected(selector game)) && null (gameStacks (board game) !! fst (position (selector game))) = game
-  | isSpecialKey KeySpace ev && selected (selector game) == Just (position (selector game)) = game {selector = emptySelector (selector game)}
-  | isSpecialKey KeySpace ev && not (canplaceCard ((gameStacks (board game) !! fst (fromJust (selected (selector game)))) !! snd (fromJust (selected (selector game)))) (gameStacks (board game) !! fst (position (selector game)))) = game {selector = emptySelector (selector game)}
-  | isSpecialKey KeySpace ev && isJust (selected (selector game)) && canplaceCard ((gameStacks (board game) !! fst (fromJust (selected (selector game)))) !! snd (fromJust (selected (selector game)))) (gameStacks (board game) !! fst (position (selector game))) = game {board = board (moveCards game), selector = (selector game) {position = moveLowestShown D (position (selector game)) (board (moveCards game)),selected=Nothing}}
+  | isSpecialKey KeyDown ev = game {selector = moveSelector cboard D cselector}
+  | isSpecialKey KeyLeft ev = game {selector = moveSelector cboard L cselector}
+  | isSpecialKey KeyRight ev = game {selector = moveSelector cboard R cselector}
+  | isSpecialKey KeyUp ev = game {selector = moveSelector cboard U cselector}
+  | isSpecialKey KeySpace ev && isNothing (selected cselector) && stacksize (gameStacks cboard !! fst (position cselector)) /=0 = game {selector = cselector {selected = Just (position cselector)}}
+  | isSpecialKey KeySpace ev && isNothing (selected cselector) && null (gameStacks cboard !! fst (position cselector)) = game
+  | isSpecialKey KeySpace ev && selected cselector == Just (position cselector) = game {selector = emptySelector cselector}
+  | isSpecialKey KeySpace ev && not (canplaceCard (getCard (fromJust (selected cselector)) cboard) (gameStacks cboard !! fst (position cselector))) = game {selector = emptySelector cselector}
+  | isSpecialKey KeySpace ev && isJust (selected cselector) && canplaceCard (getCard (fromJust (selected cselector)) cboard) (gameStacks cboard!! fst (position cselector)) = game {board = board (moveCards game), selector = (selector game) {position = moveLowestShown D (position (selector game)) (board (moveCards game)),selected=Nothing}}
   | isKey 'r' ev = game {board = (board game) {pile = turnLast3 (showncardsToBack (pile (board game)))}}
-  | isKey 'd' ev && stacksize (pile(board game))/=0 = game {board = drawCard (board game) (position (selector game)), selector = (selector game){position = moveLowestShown D (position (selector game)) (drawCard (board game) (position (selector game)))}}
-  | isKey 'e' ev && stacksize (gameStacks (board game) !! fst(position(selector game)))/=0 && canEnd (gameStacks (board game) !! fst (position (selector game)) !! snd (position (selector game))) (endTypeStack (getCardType (gameStacks (board game) !! fst (position (selector game)) !! snd (position (selector game)))) (endingStacks (board game))) = (stackToEnd game) {selector = (selector (stackToEnd game)) {position = moveLowestShown D (position (selector (stackToEnd game))) (board (stackToEnd game)), selected = Nothing}}
+  | isKey 'd' ev && stacksize (pile cboard)/=0 = game {board = drawCard cboard (position (selector game)), selector = (selector game){position = moveLowestShown D (position (selector game)) (drawCard (board game) (position (selector game)))}}
+  | isKey 'e' ev && stacksize (gameStacks cboard!! fst(position cselector))/=0 && canEnd (getCard (position cselector ) cboard) (endTypeStack (getCardType (getCard (position cselector) cboard)) (endingStacks cboard)) = (stackToEnd game) {selector = (selector (stackToEnd game)) {position = moveLowestShown D (position (selector (stackToEnd game))) (board (stackToEnd game)), selected = Nothing}}
   | otherwise = game
-
+  where cboard = board game
+        cselector = selector game
 -------------------
 -- move cards around
 -------------------
+-- get card from gamestacks board according to coordinate
+getCard:: Coordinate -> Board -> Card
+getCard (x,y) board = (gameStacks board !! x) !! y
+  
 
 -- turn the last 3 cards in the drawpile
 turnLast3 :: Stack -> Stack
