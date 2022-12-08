@@ -1,0 +1,5 @@
+- problemen met afleggen kan niet van stapel naar afgelstapel
+- Code over het algemeen ok maar kan beter
+    * Modules beter opdelen, nu zit er heel veel in logica (bijvoorbeeld handle input)
+    * functies zijn vaak nog te lang/complex, opdelen in hulpfuncties 
+    * veel constanten  
