@@ -206,7 +206,7 @@ showLowestCard stack
 emptySelector :: Selector -> Selector
 emptySelector s = s {selected = Nothing}
 
--- Update boar
+-- Update board
 step :: Float -> Game -> Game
 step _ b = b
 
@@ -242,7 +242,7 @@ isKey _ _ = False
 -- use arrow keys to move the selector
 -- use space to select a card and move cards
 -- use r to rotate the drawpile in steps of 3
--- use d to try to draw a card from the drawpile to the current selector
+-- use d to try to draw a card from the drawpile to the current selector or instantly to the endstack
 -- use e to try to send cards from gamestacks to  the matching endstacks
 -- make sure to always move to lowest card shown after move (causes index problems otherwise)
 -- TODO: dont't draw if drawpile is empty
